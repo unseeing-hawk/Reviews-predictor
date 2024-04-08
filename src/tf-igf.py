@@ -1,9 +1,7 @@
-import os
-import warnings
+from utils import read_data
 
 import joblib
-import numpy as np
-import pandas as pd
+import warnings
 
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
@@ -21,19 +19,8 @@ from pymystem3 import Mystem
 
 porter = PorterStemmer()
 warnings.filterwarnings("ignore")
-path = r'resourses/Data/'
 
-df = pd.DataFrame(columns=['reviews', 'sentiment'])
-
-for directory in os.listdir(path):
-    if os.path.isdir(path + directory):
-        files = np.array(os.listdir(path + directory))
-        for file in files:
-            with open(os.path.join(path + directory + '/', file), encoding='utf-8') as f:
-                review = f.read()
-                current_df = pd.DataFrame({'reviews': [review], 'sentiment': directory})
-                df = pd.concat([df, current_df], ignore_index=True)
-
+df = read_data()
 
 nltk.download('stopwords')
 

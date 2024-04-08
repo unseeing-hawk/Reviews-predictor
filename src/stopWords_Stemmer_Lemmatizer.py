@@ -1,8 +1,7 @@
-import os
-import warnings
+from utils import read_data
 
-import numpy as np
-import pandas as pd
+import joblib
+import warnings
 
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
@@ -15,22 +14,11 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
 from pymystem3 import Mystem
-import joblib
       
 
 warnings.filterwarnings("ignore")
-path = r'resourses/Data/'
 
-df = pd.DataFrame(columns=['review', 'sentiment'])
-
-for directory in os.listdir(path):
-    if os.path.isdir(path + directory):
-        files = np.array(os.listdir(path + directory))
-        for file in files:
-            with open(os.path.join(path + directory + '/', file), encoding='utf-8') as f:
-                review = f.read()
-                current_df = pd.DataFrame({'review': [review], 'sentiment': directory})
-                df = pd.concat([df, current_df], ignore_index=True)
+df = read_data()
 
 # Предобработка текста
 nltk.download('stopwords')
