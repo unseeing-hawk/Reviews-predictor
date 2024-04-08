@@ -1,4 +1,6 @@
+# from utils import *
 from utils import read_data
+from stopWords_Stemmer_Lemmatizer import preprocess_text
 
 import joblib
 import warnings
@@ -9,34 +11,16 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegressionCV
 from sklearn.metrics import accuracy_score, classification_report
 
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem import SnowballStemmer
 from nltk.stem.porter import PorterStemmer
-
-from pymystem3 import Mystem
 
 
 porter = PorterStemmer()
 warnings.filterwarnings("ignore")
 
 df = read_data()
+df['review'] = df['review'].apply(preprocess_text)
 
-nltk.download('stopwords')
-
-stop_words = set(stopwords.words('russian'))
-stemmer = SnowballStemmer('russian')
-lemmatizer = Mystem()
-
-def preprocess_text(text):
-    words = lemmatizer.lemmatize(text.lower())
-    words = [word for word in words if word.isalpha() and word not in stop_words]
-    return ' '.join(words)
-
-
-df['reviews'] = df['reviews'].apply(preprocess_text)
-
-X_train, X_test, y_train, y_test = train_test_split(df['reviews'], df['sentiment'], test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(df['review'], df['sentiment'], test_size=0.2, random_state=42)
 
 def tokenizer_stemmer(text):
     return[porter.stem(word) for word in text.split()]

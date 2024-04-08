@@ -1,3 +1,4 @@
+from utils import *
 from utils import read_data
 
 import joblib
@@ -5,32 +6,21 @@ import warnings
 
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.pipeline import make_pipeline
-
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem import SnowballStemmer
-from pymystem3 import Mystem
       
 
 warnings.filterwarnings("ignore")
 
-df = read_data()
-
 # Предобработка текста
-nltk.download('stopwords')
-stop_words = set(stopwords.words('russian'))
-stemmer = SnowballStemmer('russian')
-lemmatizer = Mystem()
-
 def preprocess_text(text):
     words = lemmatizer.lemmatize(text.lower())  # Лемматизация
-    words = [word for word in words if word.isalpha() and word not in stop_words]  # Убираем стоп-слова и нелитеральные токены
+    words = [stemmer.stem(word) for word in words if word.isalpha() and word not in stop_words]  # Убираем стоп-слова и нелитеральные токены
     return ' '.join(words)
 
+
+df = read_data()
 df['review'] = df['review'].apply(preprocess_text)
 
 # Разделяем данные на обучающий и тестовый наборы
