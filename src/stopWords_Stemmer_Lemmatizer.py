@@ -1,48 +1,25 @@
-from utils import *
-from utils import read_data
+from utils.utils import read_config
 
 import joblib
-import warnings
+import pandas as pd
 
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score, classification_report
 from sklearn.pipeline import make_pipeline
-      
-
-warnings.filterwarnings("ignore")
-
-# Предобработка текста
-def preprocess_text(text):
-    words = lemmatizer.lemmatize(text.lower())  # Лемматизация
-    words = [stemmer.stem(word) for word in words if word.isalpha() and word not in stop_words]  # Убираем стоп-слова и нелитеральные токены
-    return ' '.join(words)
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.feature_extraction.text import CountVectorizer
 
 
-df = read_data()
-df['review'] = df['review'].apply(preprocess_text)
+config = read_config("utils/")
 
-# Разделяем данные на обучающий и тестовый наборы
-X_train, X_test, y_train, y_test = train_test_split(df['review'], df['sentiment'], test_size=0.2, random_state=42)
+train_data = pd.read_csv(config["machineTrainDatasPath"])
 
-# Обучение модели
-def TrainModel(train_data):
+X_train = train_data['review']
+y_train = train_data['sentiment']
+
+def TrainModel():
     model = make_pipeline(CountVectorizer(), MultinomialNB())
     model.fit(X_train, y_train)
     return model
 
-# Тестирование модели
-def TestModel(model, test_data):
-    predictions = model.predict(test_data)
-    return predictions
+trained_model = TrainModel()
 
-trained_model = TrainModel(X_train)
-
-# Сохранение модели в файл
-joblib.dump(trained_model, 'resourses/stopWords_Stemmer_Lemmatizer_model.joblib')
-
-test_predictions = TestModel(trained_model, X_test)
-
-print("Accuracy:", accuracy_score(y_test, test_predictions))
-print("Classification Report:\n", classification_report(y_test, test_predictions))
+joblib.dump(trained_model, config["stopWStemLemModelPath"])
