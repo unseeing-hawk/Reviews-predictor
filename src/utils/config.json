@@ -1,0 +1,18 @@
+{
+    "preprocessStopWStem": "resourses/preprocessText/stopW_Stem_data.csv",
+    "preprocessStopWStemLem": "resourses/preprocessText/stopW_Stem_Lem_data.csv",
+
+    "machineTrainDatasPath": "resourses/test_train_datas/machine_train_data.csv",
+    "machineTestDatasPath": "resourses/test_train_datas/machine_test_data.csv",
+    "neiroTrainDatasPath": "resourses/test_train_datas/neiro_train_data.csv",
+    "neiroTestDatasPath": "resourses/test_train_datas/neiro_test_data.csv",
+
+    "stopWStemModelPath": "resourses/models/stopWords_Stemmer_model.joblib",
+    "stopWStemLemModelPath": "resourses/models/stopWords_Stemmer_Lemmatizer_model.joblib",
+    "randomForestModelPath": "resourses/models/randomForest_model.joblib",
+    "tfigfModelPath": "resourses/models/tf-igf.joblib",
+    "tfigfLogisticModelPath": "resourses/models/tf-igf_logisticReg_model.joblib",
+    "neuralModelPath": "resourses/models/neural_model.h5",
+
+    "tfidf": "resourses/tfidf.joblib"
+}
