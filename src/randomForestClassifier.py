@@ -1,10 +1,9 @@
-from utils import read_data
-from stopWords_Stemmer_Lemmatizer import preprocess_text
+from utils.utils import read_config
 
 import joblib
-import warnings
 
 import numpy as np
+import pandas as pd
 
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -16,10 +15,10 @@ from nltk.stem.porter import PorterStemmer
 
 
 porter=PorterStemmer()
-warnings.filterwarnings("ignore")
 
-df = read_data()
-df['review'] = df['review'].apply(preprocess_text)
+config = read_config("utils/")
+
+df = pd.read_csv(config["preprocessStopWStemLem"])
 
 X_train, X_test, y_train, y_test = train_test_split(df['review'], df['sentiment'], test_size=0.2, random_state=42)
 
@@ -36,7 +35,6 @@ tfidf = TfidfVectorizer(strip_accents=None,
 
 X_train_tfidf = tfidf.fit_transform(X_train)
 
-# Classification RandomForestClassifier
 clf = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
 
 # Cross-validation
@@ -45,12 +43,4 @@ print("Cross-Validation Scores:", cv_scores)
 print("Mean CV Accuracy:", np.mean(cv_scores))
 
 clf.fit(X_train_tfidf, y_train)
-joblib.dump(clf, 'resourses/randomForest_model.joblib')
-
-X_test_transformed = tfidf.transform(X_test)
-test_predictions = clf.predict(X_test_transformed)
-
-
-# Print the results
-print("Accuracy:", accuracy_score(y_test, test_predictions))
-print("Classification Report:\n", classification_report(y_test, test_predictions))
+joblib.dump(clf, config["randomForestModelPath"])

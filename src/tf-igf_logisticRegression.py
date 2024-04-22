@@ -1,25 +1,22 @@
-from utils import read_data
-from stopWords_Stemmer_Lemmatizer import preprocess_text
+from utils.utils import read_config
 
 import joblib
-import warnings
+import pandas as pd
 
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegressionCV
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 from nltk.stem.porter import PorterStemmer
 
 
 porter = PorterStemmer()
-warnings.filterwarnings("ignore")
 
+config = read_config("utils/")
 
-df = read_data()
-df['review'] = df['review'].apply(preprocess_text)
+train_data = pd.read_csv(config["machineTrainDatasPath"])
 
-X_train, X_test, y_train, y_test = train_test_split(df['review'], df['sentiment'], test_size=0.2, random_state=42)
+X_train = train_data['review']
+y_train = train_data['sentiment']
 
 def tokenizer_stemmer(text):
     return[porter.stem(word) for word in text.split()]
@@ -34,9 +31,9 @@ tfidf = TfidfVectorizer(strip_accents=None,
                         smooth_idf=True)
 
 X = tfidf.fit_transform(X_train)
+joblib.dump(tfidf, config["tfidf"])
 
 # Классификация с использованием логистической регрессии
-# Модель логистической регрессии с перекрестной проверкой
 trained_model = LogisticRegressionCV(cv=5,
                            scoring='accuracy',
                            random_state=1,
@@ -45,10 +42,4 @@ trained_model = LogisticRegressionCV(cv=5,
                            max_iter=1000).fit(X, y_train)
 
 # Сохранение модели в файл
-joblib.dump(trained_model, 'resourses/tf-igf_logisticReg_model.joblib')
-
-X_test_transformed = tfidf.transform(X_test)
-test_predictions = trained_model.predict(X_test_transformed)
-
-print("Accuracy:", accuracy_score(y_test, test_predictions))
-print("Classification Report:\n", classification_report(y_test, test_predictions))
+joblib.dump(trained_model, config["tfigfLogisticModelPath"])
