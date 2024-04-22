@@ -28,7 +28,7 @@ def get_next_number(directory):
 
 def get_movie_reviews(movie_id):
     api_url = f'https://kinopoiskapiunofficial.tech/api/v2.2/films/{movie_id}/reviews'
-    headers = {'X-API-KEY': '21ebeeee-ee27-4cdd-824c-3f461646a483'}
+    headers = {'X-API-KEY': '7ae52701-d69b-4d57-9692-de04a3c81695'}
     response = requests.get(api_url, headers=headers, verify=False)
     if response.status_code == 200:
         reviews_data = response.json().get('items')
@@ -41,7 +41,6 @@ def save_review_to_file(review_text, review_type):
     directory = 'unknown'
     if review_type == "POSITIVE":
         directory = 'pos'
-        return
     elif review_type == "NEUTRAL":
         directory = 'neu'
     elif review_type == "NEGATIVE":
@@ -60,7 +59,7 @@ def save_review_to_file(review_text, review_type):
 
 
 def main():
-    for movie_id in range(298, 1000):
+    for movie_id in range(1001, 2000):
         reviews = get_movie_reviews(movie_id)
         for review in reviews:
             review_text = review.get('description')
